@@ -8,7 +8,7 @@ without automatic restarts. The server listens on port 5001 by default; set the
 
 ## Example GET endpoint
 
-Request `GET http://localhost:5001/api?type=fire` (or provide a type ID)
+Request `GET http://localhost:5001/api/matchup/fire` (or provide a type ID)
 to receive only the names in `half_damage_to` and `double_damage_from` from
 `https://pokeapi.co/api/v2/type/fire/`.
 The `type` query parameter is required; if it is missing, the endpoint responds

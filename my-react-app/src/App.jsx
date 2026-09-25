@@ -8,15 +8,35 @@ const types = [
 ]
 
 function App() {
+  const [matchup, setMatchup] = useState(null)
   const [selectedType, setSelectedType] = useState('')
-  function getMatchup(type) {
-    // API CALL WILL GO HERE, AND WE WILL RETURN THE RESPONSE
-    return `Fake API response: You are fighting a ${type}-type Pokémon.`;
+
+  async function getMatchup(type) {
+    try {
+      const response = await fetch(`http://localhost:5001/api/matchup/${encodeURIComponent(type.toLowerCase())}`)
+
+      if (!response.ok) {
+        throw new Error(`Request failed (${response.status})`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      return { error: error.message || 'Could not load the matchup.' }
+    }
   }
 
-  function handleTypeClick(type) {
-    const response = getMatchup(type);
-    setSelectedType(response);
+  async function handleTypeClick(type) {
+    setSelectedType(type)
+    const response = await getMatchup(type)
+    setMatchup(response)
+  }
+
+  function formatTypes(typeNames) {
+    if (!Array.isArray(typeNames) || typeNames.length === 0) return 'none'
+
+    return typeNames
+      .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+      .join(', ')
   }
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-5 py-12 text-slate-900">
@@ -49,7 +69,24 @@ function App() {
           ))}
         </div>
 
-        {selectedType && <p className="mt-5 text-center">{selectedType}</p>}
+        {matchup && (
+          <div className="mt-5 rounded-xl bg-slate-100 p-4 text-sm leading-6 text-slate-700" aria-live="polite">
+            {matchup.error ? (
+              <p>{matchup.error}</p>
+            ) : (
+              <>
+                <p>
+                  Your {selectedType} moves deal half damage to:{' '}
+                  {formatTypes(matchup.half_damage_to)}.
+                </p>
+                <p className="mt-2">
+                  This Pokémon takes double damage from:{' '}
+                  {formatTypes(matchup.double_damage_from)}.
+                </p>
+              </>
+            )}
+          </div>
+        )}
 
         <p className="mt-8 border-t border-slate-100 pt-5 text-center text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
           Choose wisely, trainer

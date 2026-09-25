@@ -2,13 +2,13 @@ const express = require('express')
 const cors = require('cors')
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5001
 
 app.use(cors())
 app.use(express.json())
 
 app.get('/', (_req, res) => {
-  res.send('Pokémon Battle Assistant API is running. Try /api/matchup?type=Fire')
+  res.send('Pokémon Battle Assistant API is running. Try /api/matchup/fire')
 })
 
 // Example: GET /api/matchup?type=fire (or a type ID)
